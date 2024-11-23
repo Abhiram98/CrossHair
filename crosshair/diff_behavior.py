@@ -73,7 +73,7 @@ def describe_behavior(
     if efilter.user_exc is not None:
         exc = efilter.user_exc[0]
         debug("user-level exception found", repr(exc), *efilter.user_exc[1])
-        return (None, repr(exc))
+        return (None, exc)
     if efilter.ignore:
         return (None, "IgnoreAttempt")
     assert False
@@ -227,7 +227,9 @@ def run_iteration(
         result1 = describe_behavior(fn1, args1)
         result2 = describe_behavior(fn2, args2)
         space.detach_path()
-        if result1 == result2 and args1 == args2:
+        if result1 == result2 and args1 == args2 \
+            or (isinstance(result1[1], Exception) and isinstance(result2[1], Exception)):
+            # Functions are equivalent if both have the same result, or both throw the same error.
             debug("Functions equivalent")
             return (VerificationStatus.CONFIRMED, None)
         debug("Functions differ")
