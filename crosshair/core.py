@@ -174,6 +174,8 @@ def suspected_proxy_intolerance_exception(exc_value: Exception) -> bool:
     if not isinstance(exc_value, TypeError):
         return False
     exc_str = str(exc_value)
+    if "is not iterable" in exc_str:
+        return False
     return (
         "SymbolicStr" in exc_str
         or "SymbolicInt" in exc_str
